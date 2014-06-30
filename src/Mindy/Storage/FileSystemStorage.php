@@ -17,11 +17,16 @@ namespace Mindy\Storage;
 
 use FilesystemIterator;
 use Mindy\Base\Exception\Exception;
+use Mindy\Helper\Alias;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 class FileSystemStorage extends Storage
 {
+    /**
+     * @var string
+     */
+    public $folderName = 'public';
     /**
      * @var string
      */
@@ -33,15 +38,21 @@ class FileSystemStorage extends Storage
 
     public function init()
     {
+        $this->location = Alias::get("www." . $this->folderName);
         if (!is_dir($this->location)) {
             throw new Exception("Directory not found.");
         }
         $this->location = realpath(rtrim($this->location, DIRECTORY_SEPARATOR));
     }
 
+    public function size($name)
+    {
+        return filesize($this->path($name));
+    }
+
     protected function openInternal($name, $mode)
     {
-        if(!$this->exists($name)) {
+        if (!$this->exists($name)) {
             return null;
         }
 
@@ -59,14 +70,12 @@ class FileSystemStorage extends Storage
 
     protected function saveInternal($name, $content)
     {
-        $path = $this->location . DIRECTORY_SEPARATOR . $name;
-
-        $directory = dirname($path);
+        $directory = dirname($name);
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
 
-        return file_put_contents($path, $content) !== false;
+        return file_put_contents($name, $content) !== false;
     }
 
     public function delete($name)
