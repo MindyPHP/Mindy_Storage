@@ -34,7 +34,7 @@ class FileSystemStorage extends Storage
     /**
      * @var string
      */
-    public $baseUrl = '/media/';
+    public $baseUrl = '/public/';
 
     public function init()
     {
@@ -71,11 +71,10 @@ class FileSystemStorage extends Storage
     protected function saveInternal($name, $content)
     {
         $directory = dirname($name);
-        if (!is_dir($directory)) {
+        if ($directory !== '.' && !is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
-
-        return file_put_contents($name, $content) !== false;
+        return file_put_contents($directory == '.' ? $this->location . DIRECTORY_SEPARATOR . $name : $name, $content) !== false;
     }
 
     public function delete($name)

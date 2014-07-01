@@ -84,32 +84,35 @@ class ModelStorageTest extends DatabaseTestCase
 
         // Set local file
         $fileField->setValue(__FILE__);
-        $this->assertFalse(strpos($fileField->getPath(), '/public/models/StorageModel') === 0);
-        $this->assertTrue(strpos($fileField->getValue(), '/public/models/StorageModel') === 0);
+        // Файла нет
+        $this->assertFalse($fileField->getPath());
+        $this->assertNotNull($fileField->getValue());
 
         $model->setAttributes([
             'file' => __FILE__
         ]);
+        $this->assertTrue($model->save());
 
         // magic __get method
         $this->assertEquals('/public/models/StorageModel/' . date('Y-m-d') . '/ModelStorageTest.php', (string)$model->file);
         $this->assertEquals('/public/models/StorageModel/' . date('Y-m-d') . '/ModelStorageTest.php', $model->file->getUrl());
-
         $this->assertEquals(
             realpath(__DIR__ . '/../www/public/models/StorageModel/' . date('Y-m-d') . '/ModelStorageTest.php'),
             $model->file->getPath()
         );
         $this->assertTrue(file_exists($model->file->getPath()));
-
         $this->assertEquals(filesize(__FILE__), $model->file->getSize());
-        $this->assertTrue($model->save());
 
         $modelFresh = StorageModel::objects()->filter(['pk' => 1])->get();
         $this->assertEquals('/public/models/StorageModel/' . date('Y-m-d') . '/ModelStorageTest.php', $modelFresh->file);
-
+        $this->assertEquals('/public/models/StorageModel/' . date('Y-m-d') . '/ModelStorageTest.php', (string)$modelFresh->file);
         $modelFresh->file = __DIR__ . '/StorageTest.php';
+        $this->assertTrue($modelFresh->save());
+
         $modelTwo = new StorageModel();
         $modelTwo->file = __DIR__ . '/FilesTest.php';
+        $this->assertTrue($modelTwo->save());
+        $this->assertEquals('/public/models/StorageModel/' . date('Y-m-d') . '/StorageTest.php', $modelFresh->getAttribute('file'));
         $this->assertEquals('/public/models/StorageModel/' . date('Y-m-d') . '/StorageTest.php', $modelFresh->file->getUrl());
         $this->assertEquals('/public/models/StorageModel/' . date('Y-m-d') . '/FilesTest.php', $modelTwo->file->getUrl());
     }

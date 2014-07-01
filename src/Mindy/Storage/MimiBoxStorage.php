@@ -44,7 +44,7 @@ class MimiBoxStorage extends Storage
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'X-API-KEY: ' . $this->apiKey,
             'X-USERNAME: ' . $this->username

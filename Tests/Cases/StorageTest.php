@@ -15,14 +15,57 @@
 namespace Modules\Files\Tests\Cases;
 
 
+use Mindy\Base\Mindy;
 use Mindy\Storage\FileSystemStorage;
 use Mindy\Storage\MD5FileSystemStorage;
 use Mindy\Storage\MimiBoxStorage;
 
 class StorageTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->app = Mindy::getInstance([
+            'name' => 'Mindy',
+            'basePath' => __DIR__ . '/../',
+            'webPath' => __DIR__ . '/../www/',
+            'components' => [
+                'db' => [
+                    'class' => '\Mindy\Orm\Connection',
+                    'dsn' => 'sqlite::memory:',
+                ],
+                'finder' => [
+                    'class' => '\Mindy\Finder\FinderFactory',
+                ],
+                'storage' => [
+                    'class' => '\Mindy\Storage\FileSystemStorage',
+                    'baseUrl' => '/media/',
+                ],
+                'middleware' => [
+                    'class' => '\Mindy\Middleware\MiddlewareManager',
+                ],
+                'viewRenderer' => [
+                    'class' => '\Mindy\Renderer\Renderer',
+                    'extensions' => [],
+                    'globals' => [],
+                    'functions' => [
+                        'method_exists' => 'method_exists',
+                        'get_menu' => '\Modules\Menu\Helpers\MenuHelper::renderMenu',
+                        'get_block' => 'BlockHelper::render',
+                        'debug_panel' => '\Modules\Core\Components\DebugPanel::render'
+                    ],
+                    'filters' => [],
+                ],
+            ]
+        ]);
+    }
+
     public function tearDown()
     {
+        Mindy::setApplication(null);
+        $this->app = null;
+
         $storage = new FileSystemStorage([
             'location' => __DIR__ . '/../media/',
             'baseUrl' => '/media/',
@@ -35,22 +78,21 @@ class StorageTest extends \PHPUnit_Framework_TestCase
         $storage->delete('098f6bcd4621d373cade4e832627b4f6_1.txt');
 
         $storage->delete('test1.txt');
+
+        parent::tearDown();
     }
 
     public function testStorage()
     {
-        $storage = new FileSystemStorage([
-            'location' => __DIR__ . '/../media/',
-            'baseUrl' => '/media/',
-        ]);
+        $storage = new FileSystemStorage();
 
-        $this->assertEquals('/media/', $storage->baseUrl);
+        $this->assertEquals('/public/', $storage->baseUrl);
         $this->assertTrue(is_dir($storage->location));
 
         $this->assertTrue(file_exists($storage->path('.gitkeep')));
         $this->assertFalse($storage->path('foobar'));
 
-        $this->assertEquals('/media/foobar', $storage->url('foobar'));
+        $this->assertEquals('/public/foobar', $storage->url('foobar'));
         $this->assertTrue($storage->exists('.gitkeep'));
 
         $this->assertNotNull($storage->accessedTime('.gitkeep'));
@@ -68,10 +110,7 @@ class StorageTest extends \PHPUnit_Framework_TestCase
 
     public function testMD5Storage()
     {
-        $storage = new MD5FileSystemStorage([
-            'location' => __DIR__ . '/../media/',
-            'baseUrl' => '/media/',
-        ]);
+        $storage = new MD5FileSystemStorage();
         $name = $storage->save('test.txt', '123');
         $this->assertEquals('098f6bcd4621d373cade4e832627b4f6.txt', $name);
     }

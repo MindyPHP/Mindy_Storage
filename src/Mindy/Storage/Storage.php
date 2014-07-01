@@ -49,8 +49,7 @@ abstract class Storage extends Object
     {
         $name = $this->getValidFileName($name);
         $name = $this->getAvailableName($name);
-        $this->saveInternal($name, $content);
-        return str_replace('\\', '/', $name);
+        return $this->saveInternal($name, $content) ? str_replace('\\', '/', $name) : false;
     }
 
     abstract protected function saveInternal($name, $content);
