@@ -76,5 +76,23 @@ class MimiBoxStorage extends Storage
     {
         // TODO: Implement exists() method.
     }
+
+    /**
+     * Retrieves the list of files and directories from storage py path
+     * @param $path
+     */
+    public function dir($path = null)
+    {
+        // TODO: Implement dir() method.
+    }
+
+    /**
+     * Retrieves the list of files and directories from storage py path
+     * @param $path
+     */
+    public function mkDir($path)
+    {
+        // TODO: Implement mkDir() method.
+    }
 }
 
