@@ -18,6 +18,7 @@ namespace Mindy\Storage;
 use FilesystemIterator;
 use Mindy\Base\Exception\Exception;
 use Mindy\Helper\Alias;
+use Mindy\Helper\Text;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -74,14 +75,14 @@ class FileSystemStorage extends Storage
         if ($directory !== '.' && !is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
-        return file_put_contents($directory == '.' ? $this->location . DIRECTORY_SEPARATOR . $name : $name, $content) !== false;
+        return file_put_contents($this->location . DIRECTORY_SEPARATOR . $name, $content) !== false;
     }
 
     public function delete($name)
     {
         $path = $this->path($name);
         if (is_file($path)) {
-            unlink($path);
+            return unlink($path);
         } else if (is_dir($path)) {
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($name, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $iterPath) {
                 if ($iterPath->isDir()) {
@@ -90,8 +91,38 @@ class FileSystemStorage extends Storage
                     unlink($iterPath->getPathname());
                 }
             }
-            rmdir($path);
+            return rmdir($path);
         }
+        return false;
+    }
+
+    public function dir($path = null)
+    {
+        $path = $this->path($path);
+        $folderStructure = [
+            'directories' => [],
+            'files' => []
+        ];
+
+        foreach (new \DirectoryIterator($path) as $iteratedPath) {
+            if (!$iteratedPath->isDot() && !Text::startsWith(basename($iteratedPath->getPathname()), '.')) {
+                $key = $iteratedPath->isDir() ? 'directories' : 'files';
+                $path = str_replace($this->location . DIRECTORY_SEPARATOR, '', $iteratedPath->getPathname());
+                $folderStructure[$key][] = [
+                    'path' => $path,
+                    'url' => $this->url($path),
+                    'name' => basename($path)
+                ];
+            }
+        }
+
+        return $folderStructure;
+    }
+
+    public function mkDir($path)
+    {
+        $path = $this->path($path);
+        return mkdir($path);
     }
 
     public function url($name)

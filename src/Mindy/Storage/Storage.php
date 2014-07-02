@@ -21,6 +21,18 @@ use Mindy\Exception\Exception;
 abstract class Storage extends Object
 {
     /**
+     * Retrieves the list of files and directories from storage py path
+     * @param $path
+     */
+    abstract public function dir($path = null);
+
+    /**
+     * Retrieves the list of files and directories from storage py path
+     * @param $path
+     */
+    abstract public function mkDir($path);
+
+    /**
      * Retrieves the specified file from storage.
      * @param $name
      * @param string $mode
