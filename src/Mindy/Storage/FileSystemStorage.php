@@ -84,7 +84,7 @@ class FileSystemStorage extends Storage
         if (is_file($path)) {
             return unlink($path);
         } else if (is_dir($path)) {
-            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($name, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $iterPath) {
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST) as $iterPath) {
                 if ($iterPath->isDir()) {
                     rmdir($iterPath->getPathname());
                 } else {
@@ -121,7 +121,9 @@ class FileSystemStorage extends Storage
 
     public function mkDir($path)
     {
-        $path = $this->path($path);
+        $path = $this->location . DIRECTORY_SEPARATOR . $path;
+        if (file_exists($path))
+            return false;
         return mkdir($path);
     }
 
