@@ -71,7 +71,7 @@ class FileSystemStorage extends Storage
 
     protected function saveInternal($name, $content)
     {
-        $directory = $this->location . dirname($name);
+        $directory = $this->location . DIRECTORY_SEPARATOR . dirname($name);
         if ($directory !== '.' && !is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
