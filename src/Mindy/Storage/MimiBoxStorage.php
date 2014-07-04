@@ -62,6 +62,11 @@ class MimiBoxStorage extends Storage
         return rtrim($this->mimiboxUrl, '/') . '/' . $this->username . '/get/?filename=' . $name;
     }
 
+    public function url($name)
+    {
+        return $this->path($name);
+    }
+
     public function delete($name)
     {
         // TODO: Implement delete() method.
