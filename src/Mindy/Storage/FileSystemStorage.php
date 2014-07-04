@@ -27,7 +27,7 @@ class FileSystemStorage extends Storage
     /**
      * @var string
      */
-    public $folderName = 'public';
+    public $folderName = 'media';
     /**
      * @var string
      */
@@ -35,7 +35,7 @@ class FileSystemStorage extends Storage
     /**
      * @var string
      */
-    public $baseUrl = '/public/';
+    public $baseUrl = '/media/';
 
     public function init()
     {

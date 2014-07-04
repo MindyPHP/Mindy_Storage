@@ -99,6 +99,12 @@ abstract class Storage extends Object
     abstract public function exists($name);
 
     /**
+     * Retrieves the url address of file
+     * @param $name
+     */
+    abstract public function url($name);
+
+    /**
      * @param $name
      * @throws \Mindy\Exception\Exception
      * @return string
