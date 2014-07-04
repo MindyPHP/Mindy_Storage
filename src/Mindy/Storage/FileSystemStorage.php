@@ -15,6 +15,7 @@
 namespace Mindy\Storage;
 
 
+use DirectoryIterator;
 use FilesystemIterator;
 use Mindy\Base\Exception\Exception;
 use Mindy\Helper\Alias;
@@ -27,7 +28,7 @@ class FileSystemStorage extends Storage
     /**
      * @var string
      */
-    public $folderName = 'public';
+    public $folderName = 'media';
     /**
      * @var string
      */
@@ -35,7 +36,7 @@ class FileSystemStorage extends Storage
     /**
      * @var string
      */
-    public $baseUrl = '/public/';
+    public $baseUrl = '/media/';
 
     public function init()
     {
@@ -104,7 +105,7 @@ class FileSystemStorage extends Storage
             'files' => []
         ];
 
-        foreach (new \DirectoryIterator($path) as $iteratedPath) {
+        foreach (new DirectoryIterator($path) as $iteratedPath) {
             if (!$iteratedPath->isDot() && !Text::startsWith(basename($iteratedPath->getPathname()), '.')) {
                 $key = $iteratedPath->isDir() ? 'directories' : 'files';
                 $path = str_replace($this->location . DIRECTORY_SEPARATOR, '', $iteratedPath->getPathname());
