@@ -10,7 +10,6 @@
     "require": {
         "php": ">=5.4",
         "mindy/orm": "dev-master",
-        "mindy/core": "dev-master",
         "mindy/helper": "dev-master",
         "mindy/exception": "dev-master"
     },
