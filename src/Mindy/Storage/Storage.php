@@ -15,11 +15,14 @@
 namespace Mindy\Storage;
 
 
-use Mindy\Core\Object;
 use Mindy\Exception\Exception;
+use Mindy\Helper\Traits\Accessors;
+use Mindy\Helper\Traits\Configurator;
 
-abstract class Storage extends Object
+abstract class Storage
 {
+    use Accessors, Configurator;
+
     /**
      * Retrieves the list of files and directories from storage py path
      * @param $path
