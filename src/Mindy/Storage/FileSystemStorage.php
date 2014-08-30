@@ -123,9 +123,7 @@ class FileSystemStorage extends Storage
     public function mkDir($path)
     {
         $path = $this->location . DIRECTORY_SEPARATOR . $path;
-        if (file_exists($path))
-            return false;
-        return mkdir($path);
+        return file_exists($path) ? false : mkdir($path);
     }
 
     public function url($name)

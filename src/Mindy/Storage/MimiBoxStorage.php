@@ -40,7 +40,7 @@ class MimiBoxStorage extends Storage
         $file = tempnam(sys_get_temp_dir(), 'POST_MIMIBOX_');
         file_put_contents($file, $content);
 
-        $ch = curl_init($this->mimiboxUrl);
+        $ch = curl_init($this->mimiboxUrl . '/' . dirname($name));
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -50,16 +50,17 @@ class MimiBoxStorage extends Storage
             'X-USERNAME: ' . $this->username
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, [
-            'files' => "@" . $file . ';filename=' . $name
+            'files' => "@" . $file . ';filename=' . basename($name)
         ]);
         $result = curl_exec($ch);
         curl_close($ch);
+        var_dump($result);
         return $result;
     }
 
     public function path($name)
     {
-        return rtrim($this->mimiboxUrl, '/') . '/' . $this->username . '/get/?filename=' . $name;
+        return rtrim($this->mimiboxUrl, '/') . '/' . $this->username  . '/' . $name;
     }
 
     public function url($name)

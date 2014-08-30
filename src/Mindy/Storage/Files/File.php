@@ -42,4 +42,9 @@ abstract class File
         }
         return $this->ext;
     }
+
+    public function getContent()
+    {
+        return file_get_contents($this->path);
+    }
 }
