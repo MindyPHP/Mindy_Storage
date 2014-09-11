@@ -54,7 +54,6 @@ class MimiBoxStorage extends Storage
         ]);
         $result = curl_exec($ch);
         curl_close($ch);
-        var_dump($result);
         return $result;
     }
 
