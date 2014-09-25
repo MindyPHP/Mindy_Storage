@@ -15,6 +15,9 @@
 namespace Mindy\Storage;
 
 
+use Mindy\Exception\Exception;
+use Mindy\Helper\Alias;
+
 class MimiBoxStorage extends Storage
 {
     /**
@@ -37,8 +40,11 @@ class MimiBoxStorage extends Storage
 
     protected function saveInternal($name, $content)
     {
-        $file = tempnam(sys_get_temp_dir(), 'POST_MIMIBOX_');
-        file_put_contents($file, $content);
+        $file = tempnam(Alias::get('application.runtime'), 'POST_MIMIBOX_');
+        $saved = file_put_contents($file, $content);
+        if($saved === false) {
+            throw new Exception("File not saved");
+        }
 
         $ch = curl_init($this->mimiboxUrl . '/' . dirname($name));
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -54,6 +60,7 @@ class MimiBoxStorage extends Storage
         ]);
         $result = curl_exec($ch);
         curl_close($ch);
+        unlink($file);
         return $result;
     }
 
