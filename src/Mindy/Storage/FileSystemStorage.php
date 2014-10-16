@@ -17,7 +17,7 @@ namespace Mindy\Storage;
 
 use DirectoryIterator;
 use FilesystemIterator;
-use Mindy\Base\Exception\Exception;
+use Mindy\Exception\Exception;
 use Mindy\Helper\Alias;
 use Mindy\Helper\Text;
 use RecursiveDirectoryIterator;

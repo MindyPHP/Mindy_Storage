@@ -20,7 +20,7 @@ class LocalFile extends File
     public function __construct($path)
     {
         if(!is_file($path)) {
-            throw new \Mindy\Base\Exception\Exception("File {$path} not found");
+            throw new \Mindy\Exception\Exception("File {$path} not found");
         }
 
         $this->path = $path;
@@ -34,7 +34,7 @@ class LocalFile extends File
         } else if (function_exists("mime_content_type")) {
             $mime = mime_content_type($path);
         } else {
-            throw new \Mindy\Base\Exception\Exception("Unknown file extension");
+            throw new \Mindy\Exception\Exception("Unknown file extension");
         }
         $this->type = $mime;
     }
