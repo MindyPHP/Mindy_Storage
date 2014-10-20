@@ -55,8 +55,15 @@ class MimiBoxStorage extends Storage
             'X-API-KEY: ' . $this->apiKey,
             'X-USERNAME: ' . $this->username
         ]);
+
+        if(PHP_VERSION > 5.4) {
+            $file = new \CurlFile($file, null, basename($name));
+        } else {
+            $file = "@" . $file . ';filename=' . basename($name);
+        }
+
         curl_setopt($ch, CURLOPT_POSTFIELDS, [
-            'files' => "@" . $file . ';filename=' . basename($name)
+            'files' => $file
         ]);
         $result = curl_exec($ch);
         curl_close($ch);
