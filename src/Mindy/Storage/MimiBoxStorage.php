@@ -42,7 +42,7 @@ class MimiBoxStorage extends Storage
     {
         $file = tempnam(Alias::get('application.runtime'), 'POST_MIMIBOX_');
         $saved = file_put_contents($file, $content);
-        if($saved === false) {
+        if ($saved === false) {
             throw new Exception("File not saved");
         }
 
@@ -56,7 +56,7 @@ class MimiBoxStorage extends Storage
             'X-USERNAME: ' . $this->username
         ]);
 
-        if(PHP_VERSION > 5.4) {
+        if (PHP_VERSION > 5.4) {
             $file = new \CurlFile($file, null, basename($name));
         } else {
             $file = "@" . $file . ';filename=' . basename($name);
@@ -67,13 +67,15 @@ class MimiBoxStorage extends Storage
         ]);
         $result = curl_exec($ch);
         curl_close($ch);
-        unlink($file);
+        if (!is_object($file)) {
+            unlink($file);
+        }
         return $result;
     }
 
     public function path($name)
     {
-        return rtrim($this->mimiboxUrl, '/') . '/' . $this->username  . '/' . $name;
+        return rtrim($this->mimiboxUrl, '/') . '/' . $this->username . '/' . $name;
     }
 
     public function url($name)
