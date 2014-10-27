@@ -40,8 +40,8 @@ class MimiBoxStorage extends Storage
 
     protected function saveInternal($name, $content)
     {
-        $file = tempnam(Alias::get('application.runtime'), 'POST_MIMIBOX_');
-        $saved = file_put_contents($file, $content);
+        $tmpFile = tempnam(Alias::get('application.runtime'), 'POST_MIMIBOX_');
+        $saved = file_put_contents($tmpFile, $content);
         if ($saved === false) {
             throw new Exception("File not saved");
         }
@@ -57,9 +57,9 @@ class MimiBoxStorage extends Storage
         ]);
 
         if (PHP_VERSION > 5.4) {
-            $file = new \CurlFile($file, null, basename($name));
+            $file = new \CurlFile($tmpFile, null, basename($name));
         } else {
-            $file = "@" . $file . ';filename=' . basename($name);
+            $file = "@" . $tmpFile . ';filename=' . basename($name);
         }
 
         curl_setopt($ch, CURLOPT_POSTFIELDS, [
@@ -68,7 +68,7 @@ class MimiBoxStorage extends Storage
         $result = curl_exec($ch);
         curl_close($ch);
         if (!is_object($file)) {
-            unlink($file);
+            unlink($tmpFile);
         }
         return $result;
     }
