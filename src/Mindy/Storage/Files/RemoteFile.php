@@ -19,7 +19,6 @@ class RemoteFile extends File
 {
     function urlExists($url){
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_MUTE, 1);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -39,7 +38,6 @@ class RemoteFile extends File
     function getInfo($url)
     {
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_MUTE, 1);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
