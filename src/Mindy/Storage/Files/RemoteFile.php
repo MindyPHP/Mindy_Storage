@@ -17,7 +17,8 @@ namespace Mindy\Storage\Files;
 
 class RemoteFile extends File
 {
-    function urlExists($url){
+    function urlExists($url)
+    {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_NOBODY, true);

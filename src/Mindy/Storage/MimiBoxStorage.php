@@ -17,8 +17,9 @@ namespace Mindy\Storage;
 
 use Mindy\Exception\Exception;
 use Mindy\Helper\Alias;
+use Mindy\Storage\Interfaces\IExternalStorage;
 
-class MimiBoxStorage extends Storage
+class MimiBoxStorage extends Storage implements IExternalStorage
 {
     /**
      * @var string
