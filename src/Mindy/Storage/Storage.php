@@ -116,4 +116,13 @@ abstract class Storage
     {
         throw new Exception("This backend doesn't support this feature.");
     }
+
+    /**
+     * @param $name
+     * @return string
+     */
+    public function extension($name)
+    {
+        return pathinfo($name, PATHINFO_EXTENSION);
+    }
 }
