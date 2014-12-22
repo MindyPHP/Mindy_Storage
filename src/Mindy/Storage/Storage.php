@@ -58,12 +58,15 @@ abstract class Storage
      * from the beginning.
      * @param $name
      * @param $content
+     * @param $force bool Do not check available name - force rewrite.
      * @return mixed
      */
-    public function save($name, $content)
+    public function save($name, $content, $force = false)
     {
         $name = $this->getValidFileName($name);
-        $name = $this->getAvailableName($name);
+        if (!$force) {
+            $name = $this->getAvailableName($name);
+        }
         return $this->saveInternal($name, $content) ? str_replace('\\', '/', $name) : false;
     }
 
