@@ -23,6 +23,8 @@ abstract class Storage
 {
     use Accessors, Configurator;
 
+    public $useMD5 = true;
+
     /**
      * Retrieves the list of files and directories from storage py path
      * @param $path
@@ -49,7 +51,7 @@ abstract class Storage
 
     public function getValidFileName($name)
     {
-        return $name;
+        return $this->useMD5 ? md5($name) : $name;
     }
 
     /**
@@ -63,7 +65,6 @@ abstract class Storage
      */
     public function save($name, $content, $force = false)
     {
-        $name = $this->getValidFileName($name);
         if (!$force) {
             $name = $this->getAvailableName($name);
         }
@@ -81,7 +82,7 @@ abstract class Storage
     public function getAvailableName($name)
     {
         $ext = pathinfo($name, PATHINFO_EXTENSION);
-        $fileName = str_replace("." . $ext, "", $name);
+        $fileName = $this->getValidFileName(str_replace("." . $ext, "", $name));
 
         $count = 0;
         while ($this->exists($name)) {
