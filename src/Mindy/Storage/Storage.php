@@ -81,13 +81,22 @@ abstract class Storage
      */
     public function getAvailableName($name)
     {
+        $dirname = dirname($name);
         $ext = pathinfo($name, PATHINFO_EXTENSION);
         $fileName = $this->getValidFileName(str_replace("." . $ext, "", $name));
 
         $count = 0;
+        $name = strtr("{dirname}/{filename}_{count}.{ext}", [
+            '{dirname}' => $dirname,
+            '{filename}' => $fileName,
+            '{count}' => $count,
+            '{ext}' => $ext
+        ]);
+
         while ($this->exists($name)) {
             $count += 1;
-            $name = strtr("{filename}_{count}.{ext}", [
+            $name = strtr("{dirname}/{filename}_{count}.{ext}", [
+                '{dirname}' => $dirname,
                 '{filename}' => $fileName,
                 '{count}' => $count,
                 '{ext}' => $ext
