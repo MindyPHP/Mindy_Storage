@@ -10,8 +10,7 @@
     },
     "require": {
         "php": ">=5.4",
-        "mindy/orm": "0.1",
-        "mindy/helper": "0.1",
+        "mindy/helper": "0.1",s
         "mindy/exception": "0.1"
     },
     "require-dev": {
