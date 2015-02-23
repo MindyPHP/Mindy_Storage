@@ -14,7 +14,11 @@
 
 namespace Mindy\Storage\Interfaces;
 
+/**
+ * Interface IExternalStorage
+ * @package Mindy\Storage
+ */
+interface IExternalStorage
+{
 
-interface IExternalStorage {
-
-} 
+}

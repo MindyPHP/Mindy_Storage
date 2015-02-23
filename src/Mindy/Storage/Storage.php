@@ -1,24 +1,15 @@
 <?php
-/**
- *
- *
- * All rights reserved.
- *
- * @author Falaleev Maxim
- * @email max@studio107.ru
- * @version 1.0
- * @company Studio107
- * @site http://studio107.ru
- * @date 24/06/14.06.2014 18:48
- */
 
 namespace Mindy\Storage;
-
 
 use Mindy\Exception\Exception;
 use Mindy\Helper\Traits\Accessors;
 use Mindy\Helper\Traits\Configurator;
 
+/**
+ * Class Storage
+ * @package Mindy\Storage
+ */
 abstract class Storage
 {
     use Accessors, Configurator;
