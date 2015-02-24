@@ -14,8 +14,6 @@ abstract class Storage
 {
     use Accessors, Configurator;
 
-    public $useMD5 = true;
-
     /**
      * Retrieves the list of files and directories from storage py path
      * @param $path
@@ -42,7 +40,7 @@ abstract class Storage
 
     public function getValidFileName($name)
     {
-        return $this->useMD5 ? md5($name) : $name;
+        return $name;
     }
 
     /**
