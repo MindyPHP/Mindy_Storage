@@ -72,7 +72,7 @@ abstract class Storage
     {
         $dirname = dirname($name);
         $ext = pathinfo($name, PATHINFO_EXTENSION);
-        $fileName = basename($name, "." . $ext);
+        $fileName = pathinfo($name, PATHINFO_FILENAME);
         $fileName = $this->getValidFileName($fileName);
 
         $count = 0;
