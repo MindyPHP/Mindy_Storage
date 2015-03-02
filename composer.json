@@ -1,7 +1,7 @@
 {
     "name": "mindy/storage",
     "homepage": "https://github.com/studio107/Mindy_Storage",
-    "version": "0.1",
+    "version": "0.1.2",
     "license": "MIT",
     "autoload": {
         "psr-4": {
