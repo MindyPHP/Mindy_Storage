@@ -92,7 +92,6 @@ abstract class Storage
                 '{ext}' => $ext
             ]);
         }
-
         return $name;
     }
 
