@@ -72,7 +72,8 @@ abstract class Storage
     {
         $dirname = dirname($name);
         $ext = pathinfo($name, PATHINFO_EXTENSION);
-        $fileName = $this->getValidFileName(str_replace("." . $ext, "", $name));
+        $fileName = basename($name, "." . $ext);
+        $fileName = $this->getValidFileName($fileName);
 
         $count = 0;
         $name = strtr("{dirname}/{filename}_{count}.{ext}", [
@@ -91,6 +92,7 @@ abstract class Storage
                 '{ext}' => $ext
             ]);
         }
+
         return $name;
     }
 
