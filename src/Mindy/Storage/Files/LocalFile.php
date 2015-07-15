@@ -2,6 +2,7 @@
 
 namespace Mindy\Storage\Files;
 
+use Mindy\Helper\File as FileHelper;
 /**
  * Class LocalFile
  * @package Mindy\Storage
@@ -15,7 +16,7 @@ class LocalFile extends File
         }
 
         $this->path = $path;
-        $this->name = basename($path);
+        $this->name = FileHelper::mbBasename($path);
         $this->size = filesize($path);
 
         if (function_exists("finfo_file")) {
