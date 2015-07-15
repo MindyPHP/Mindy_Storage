@@ -3,6 +3,7 @@
 namespace Mindy\Storage;
 
 use Mindy\Exception\Exception;
+use Mindy\Helper\File;
 use Mindy\Helper\Traits\Accessors;
 use Mindy\Helper\Traits\Configurator;
 
@@ -71,8 +72,8 @@ abstract class Storage
     public function getAvailableName($name)
     {
         $dirname = dirname($name);
-        $ext = pathinfo($name, PATHINFO_EXTENSION);
-        $fileName = pathinfo($name, PATHINFO_FILENAME);
+        $ext = File::mbPathinfo($name, PATHINFO_EXTENSION);
+        $fileName = File::mbPathinfo($name, PATHINFO_FILENAME);
         $fileName = $this->getValidFileName($fileName);
 
         $count = 0;
@@ -126,6 +127,6 @@ abstract class Storage
      */
     public function extension($name)
     {
-        return pathinfo($name, PATHINFO_EXTENSION);
+        return File::mbPathinfo($name, PATHINFO_EXTENSION);
     }
 }
