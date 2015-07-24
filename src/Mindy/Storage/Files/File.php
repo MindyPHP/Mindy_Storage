@@ -38,9 +38,9 @@ abstract class File
      */
     public function getExt()
     {
-        if($this->ext === null) {
+        if ($this->ext === null) {
             $this->ext = pathinfo($this->path, PATHINFO_EXTENSION);
-            if(strlen($this->ext) != 0 && strpos($this->ext, '.') === 0) {
+            if (strlen($this->ext) != 0 && strpos($this->ext, '.') === 0) {
                 unset($this->ext[0]);
             }
         }
