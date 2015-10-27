@@ -31,7 +31,9 @@ class FileSystemStorage extends Storage
 
     public function init()
     {
-        $this->location = Alias::get("www." . $this->folderName);
+        if (empty($this->location)) {
+            $this->location = Alias::get("www." . $this->folderName);
+        }
         if (!is_dir($this->location)) {
             throw new Exception("Directory not found.");
         }
