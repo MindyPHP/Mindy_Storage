@@ -3,6 +3,7 @@
 namespace Mindy\Storage\Files;
 
 use Mindy\Helper\File as FileHelper;
+
 /**
  * Class LocalFile
  * @package Mindy\Storage
