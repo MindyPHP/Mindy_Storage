@@ -14,7 +14,6 @@
 
 namespace Modules\Files\Tests\Cases;
 
-
 use Mindy\Storage\Files\LocalFile;
 use Mindy\Storage\Files\UploadedFile;
 
@@ -32,6 +31,7 @@ class FilesTest extends \PHPUnit_Framework_TestCase
         // key: value from $_FILES
         $uploadedFile = new UploadedFile([
             'name' => __FILE__,
+            'tmp_name' => __FILE__,
             'type' => 'text/x-php',
             'size' => filesize(__FILE__),
             'error' => UPLOAD_ERR_OK

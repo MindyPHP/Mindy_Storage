@@ -1,132 +1,71 @@
 <?php
+/**
+ * Author: Falaleev Maxim
+ * Email: max@studio107.ru
+ * Company: http://en.studio107.ru
+ * Date: 24/03/16
+ * Time: 20:46
+ */
 
 namespace Mindy\Storage;
 
-use Mindy\Exception\Exception;
-use Mindy\Helper\File;
+use League\Flysystem\Filesystem;
+use League\Flysystem\MountManager;
 use Mindy\Helper\Traits\Accessors;
 use Mindy\Helper\Traits\Configurator;
 
-/**
- * Class Storage
- * @package Mindy\Storage
- */
-abstract class Storage
+class Storage
 {
-    use Accessors, Configurator;
+    use Configurator, Accessors;
 
     /**
-     * Retrieves the list of files and directories from storage py path
-     * @param $path
+     * @var string
      */
-    abstract public function dir($path = null);
+    public $baseUrl = '/media/';
+    /**
+     * @var array
+     */
+    public $adapters = [];
+    /**
+     * @var string
+     */
+    public $defaultAdapter = 'default';
+    /**
+     * @var MountManager
+     */
+    private $_fs;
 
     /**
-     * Retrieves the list of files and directories from storage py path
-     * @param $path
+     * Initialize adapters
      */
-    abstract public function mkDir($path);
-
-    /**
-     * Retrieves the specified file from storage.
-     * @param $name
-     * @param string $mode
-     */
-    public function open($name, $mode = 'rb')
+    public function init()
     {
-        return $this->openInternal($name, $mode);
-    }
-
-    abstract protected function openInternal($name, $mode);
-
-    public function getValidFileName($name)
-    {
-        return $name;
-    }
-
-    /**
-     * Saves new content to the file specified by name. The content should be
-     * a proper File object or any python file-like object, ready to be read
-     * from the beginning.
-     * @param $name
-     * @param $content
-     * @param $force bool Do not check available name - force rewrite.
-     * @return mixed
-     */
-    public function save($name, $content, $force = false)
-    {
-        if (!$force) {
-            $name = $this->getAvailableName($name);
+        $fs = [];
+        foreach ($this->adapters as $name => $adapter) {
+            $fs[$name] = new Filesystem($adapter instanceof \Closure ? $adapter->__invoke() : $adapter);
         }
-        return $this->saveInternal($name, $content) ? str_replace('\\', '/', $name) : false;
+        $this->_fs = new MountManager($fs);
     }
 
-    abstract protected function saveInternal($name, $content);
-
     /**
-     * Returns a filename that's free on the target storage system, and
-     * available for new content to be written to.
-     * @param $name
-     * @return string
+     * @param null $name
+     * @return \League\Flysystem\FilesystemInterface
      */
-    public function getAvailableName($name)
+    public function getFileSystem($name = null)
     {
-        $dirname = dirname($name);
-        $ext = File::mbPathinfo($name, PATHINFO_EXTENSION);
-        $fileName = File::mbPathinfo($name, PATHINFO_FILENAME);
-        $fileName = $this->getValidFileName($fileName);
-
-        $count = 0;
-        $name = strtr("{dirname}/{filename}_{count}.{ext}", [
-            '{dirname}' => $dirname,
-            '{filename}' => $fileName,
-            '{count}' => $count,
-            '{ext}' => $ext
-        ]);
-
-        while ($this->exists($name)) {
-            $count += 1;
-            $name = strtr("{dirname}/{filename}_{count}.{ext}", [
-                '{dirname}' => $dirname,
-                '{filename}' => $fileName,
-                '{count}' => $count,
-                '{ext}' => $ext
-            ]);
+        if (!$name) {
+            $name = $this->defaultAdapter;
         }
-        return $name;
+        return $this->_fs->getFilesystem($name);
     }
-
-    abstract public function delete($name);
-
-    /**
-     * @param $name
-     * @throws \Mindy\Exception\Exception
-     * @return bool
-     */
-    abstract public function exists($name);
 
     /**
      * Retrieves the url address of file
      * @param $name
-     */
-    abstract public function url($name);
-
-    /**
-     * @param $name
-     * @throws \Mindy\Exception\Exception
      * @return string
      */
-    public function path($name)
+    public function url($name)
     {
-        throw new Exception("This backend doesn't support this feature.");
-    }
-
-    /**
-     * @param $name
-     * @return string
-     */
-    public function extension($name)
-    {
-        return File::mbPathinfo($name, PATHINFO_EXTENSION);
+        return $this->baseUrl . str_replace('\\', '/', $name);
     }
 }

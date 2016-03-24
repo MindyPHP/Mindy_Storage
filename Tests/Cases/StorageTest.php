@@ -14,114 +14,41 @@
 
 namespace Modules\Files\Tests\Cases;
 
-
-use Mindy\Base\Mindy;
-use Mindy\Storage\FileSystemStorage;
-use Mindy\Storage\MD5FileSystemStorage;
-use Mindy\Storage\MimiBoxStorage;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Cached\CachedAdapter;
+use League\Flysystem\Cached\Storage\Memory as CacheStore;
+use Mindy\Storage\Storage;
 
 class StorageTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->app = Mindy::getInstance([
-            'name' => 'Mindy',
-            'basePath' => __DIR__ . '/../',
-            'webPath' => __DIR__ . '/../www/',
-            'components' => [
-                'db' => [
-                    'class' => '\Mindy\Orm\Connection',
-                    'dsn' => 'sqlite::memory:',
-                ],
-                'finder' => [
-                    'class' => '\Mindy\Finder\FinderFactory',
-                ],
-                'storage' => [
-                    'class' => '\Mindy\Storage\FileSystemStorage',
-                    'baseUrl' => '/media/',
-                ],
-                'middleware' => [
-                    'class' => '\Mindy\Middleware\MiddlewareManager',
-                ],
-                'viewRenderer' => [
-                    'class' => '\Mindy\Renderer\Renderer',
-                    'extensions' => [],
-                    'globals' => [],
-                    'functions' => [
-                        'method_exists' => 'method_exists',
-                        'get_menu' => '\Modules\Menu\Helpers\MenuHelper::renderMenu',
-                        'get_block' => 'BlockHelper::render',
-                        'debug_panel' => '\Modules\Core\Components\DebugPanel::render'
-                    ],
-                    'filters' => [],
-                ],
-            ]
-        ]);
-    }
-
-    public function tearDown()
-    {
-        Mindy::setApplication(null);
-        $this->app = null;
-
-        $storage = new FileSystemStorage([
-            'location' => __DIR__ . '/../media/',
-            'baseUrl' => '/media/',
-        ]);
-        $storage->delete('test.txt');
-        $storage->delete('test_1.txt');
-        $storage->delete('test_2.txt');
-
-        $storage->delete('098f6bcd4621d373cade4e832627b4f6.txt');
-        $storage->delete('098f6bcd4621d373cade4e832627b4f6_1.txt');
-
-        $storage->delete('test1.txt');
-
-        parent::tearDown();
-    }
-
     public function testStorage()
     {
-        $storage = new FileSystemStorage();
-
-        $this->assertEquals('/public/', $storage->baseUrl);
-        $this->assertTrue(is_dir($storage->location));
-
-        $this->assertTrue(file_exists($storage->path('.gitkeep')));
-        $this->assertFalse($storage->path('foobar'));
-
-        $this->assertEquals('/public/foobar', $storage->url('foobar'));
-        $this->assertTrue($storage->exists('.gitkeep'));
-
-        $this->assertNotNull($storage->accessedTime('.gitkeep'));
-        $this->assertNotNull($storage->createdTime('.gitkeep'));
-        $this->assertNotNull($storage->modifiedTime('.gitkeep'));
-
-        $this->assertEquals('test.txt', $storage->save('test.txt', '123'));
-        $this->assertEquals("123", $storage->open('test.txt'));
-
-        $this->assertEquals('test_1.txt', $storage->save('test.txt', '123'));
-        $this->assertEquals("123", $storage->open('test.txt'));
-
-        $this->assertEquals(null, $storage->open('test1.txt'));
-    }
-
-    public function testMD5Storage()
-    {
-        $storage = new MD5FileSystemStorage();
-        $name = $storage->save('test.txt', '123');
-        $this->assertEquals('098f6bcd4621d373cade4e832627b4f6.txt', $name);
-    }
-
-    public function testMimiBoxStorage()
-    {
-        $storage = new MimiBoxStorage([
-            'apiKey' => 'test',
-            'username' => '123456',
+        $s = new Storage([
+            'adapters' => [
+                'default' => function () {
+                    // Create the adapter
+                    $localAdapter = new Local(__DIR__ . '/../www/media');
+                    // Create the cache store
+                    $cacheStore = new CacheStore();
+                    // Decorate the adapter
+                    return new CachedAdapter($localAdapter, $cacheStore);
+                }
+            ]
         ]);
-        $name = $storage->save('test1.txt', '123');
-        $this->assertEquals('test1.txt', $name);
+
+        $fs = $s->getFileSystem();
+        $this->assertTrue($fs->has('.gitkeep'));
+        $stream = fopen(__FILE__, 'r+');
+        $state = $fs->writeStream('test.txt', $stream);
+        $this->assertTrue($state);
+        fclose($stream);
+        $this->assertTrue($fs->has('test.txt'));
+
+        $this->assertEquals(2, count($fs->listContents('')));
+    }
+
+    protected function tearDown()
+    {
+        @unlink(__DIR__ . '/../www/media/test.txt');
     }
 }

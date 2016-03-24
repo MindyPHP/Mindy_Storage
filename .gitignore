@@ -1,4 +1,6 @@
+Tests/runtime
 Tests/www
-Tests/media
 .idea
 *.iml
+vendor
+composer.lock
