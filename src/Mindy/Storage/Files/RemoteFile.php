@@ -2,6 +2,8 @@
 
 namespace Mindy\Storage\Files;
 
+use Exception;
+
 /**
  * Class RemoteFile
  * @package Mindy\Storage
@@ -11,7 +13,7 @@ class RemoteFile extends File
     public function __construct($path)
     {
         if (!$this->urlExists($path)) {
-            throw new \Mindy\Exception\Exception("File {$path} not found");
+            throw new Exception("File {$path} not found");
         }
 
         list($size, $type) = $this->getInfo($path);
